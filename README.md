@@ -1,2 +1,2 @@
 # dry_june_in_illinois
-Machine-learning prediction with ordinary-least-squares, partial-least-squares
+The reports describes a machine-learning prediction, comparing ordinary-least-squares, partial-least-squares with principal-components-analysis pre-processing, and ridge regression. The raw data is weather data from Station USW00094846 at O’Hare Airport at Chicago, Illinois covering the years from 1960 to 2018. The raw data was processed to make a data frame of year records that also including the the level of Lakes Huron-Michigan and simulated solar irradiation levels. 
