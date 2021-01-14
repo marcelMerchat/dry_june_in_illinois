@@ -443,7 +443,6 @@ VelocityVector <- R6Class("VelocityVector",
    )
 )
 
-
 ## (Class 3) Force Vector
 
 ## The tail point represents the center of mass of all the planets except
@@ -931,7 +930,6 @@ SolarSystem <- R6Class("SolarSystem",
       
       # Starting time is at the aphelion the earth.  
       
-      #distance0 <- 816.62*10^9## Calibration: lag is 0 degrees
       distance0 <- 816.616*10^9## Calibration: lag is 0 degrees
       theta <- 194.75385 
       heading0 <- theta + 90

@@ -1726,7 +1726,7 @@ processing <- function(planet="earth",sample_rate=8000,
   area <- 2 * two_pie * r^2
   
   # effective radius of the earth's orbit is 
-  msed / 10^9  # [1] 149.6422 million kilometers
+  msed / 10^9  # [1] 149.6422-million kilometers
   
   total <- area * watt_m2  
   # [1] 3.829803e+26 384.6 yotta watts (3.846×1026 watts)
@@ -1854,7 +1854,12 @@ The Farmer\'s Almanac advises that ["A cold and wet June spoils the rest of the 
 
    After exploring the relationship between June rainfall and weather data by looking for clusters in Section-5, a preliminary least-squares analysis in Section-7 and Section-8, and principal component analysis in Section-10, we develop four algorithms that predict the amount of rain for the month of June in Section-12. We compare the mean-squared error for four models using cross-validation in in Section-13, and finally perform final tests for which the bias, variance, and mean-square-error for each method is presented in Section-14.
    
-   In trying to predict the amount of June rain, this report can only point to a relatively weak correlation with weather in the preceding months. The data indicates that the probability of a wet June is slightly correlated with heavy snow in February and cold weather in March and April. This lowers the probability of a dry June a little, but the difference between a dry June that affects crop yields and a less damaging one can be affected by one storm in the middle of the month. Another way of saying this is that the relatively large variance in June rain level is more crucial when the predicted total rainfall is small, particularly below 100-mm, compared to years with more rain. None of the dry years in the final test have predictions above 100-mm for June rain while the three wettest year in the training data have predictions above 100-mm for June rain as shown in the exploratory plot of Figure-6. 
+   In trying to predict the amount of June rain, this report can only point to a relatively weak correlation with weather in the preceding months. The data indicates that the probability of a wet June is slightly correlated with heavy snow in February and cold weather in March and April. This lowers the probability of a dry June a little, but the difference between a dry June that affects crop yields and a less damaging one can be affected by one storm in the middle of the month. Another way of saying this is that the relatively large variance in June rain level is more crucial when the predicted total rainfall is small, particularly below 100-mm, compared to years with more rain. None of the dry years in the final test have predictions above 100-mm for June rain while the three wettest year in the training data have predictions above 100-mm for June rain as shown in the exploratory plot of Figure-6.
+   
+   The reproducible code for this project and report is shared at this address:
+   
+   https://github.com/marcelMerchat/dry_june_in_illinois
+   <br>
 
 <script>
 sectionnum = sectionnum + 1;
@@ -1990,7 +1995,7 @@ sectionnum = sectionnum + 1;
 <li>There are separate columns for the year, month, and date as integers.</li>
 <li>Temperatures are now indicated in degrees Centigrade. In the original data, the temperature is multiplied by 10 to eliminate any decimals. </li>
 <li>Rain precipitation is converted to millimeters where the raw PRCP field was expressed in tenths of a millimeter without decimals. For example, 1.2-mm of precipitation was originally recorded as 12 which may have been helpful for data entry. In the new data file, 1.2-mm of rain is expressed as 1.2.</li>
-<li>The data begins in 1959 when maximum and minimium temperature are first reported over a full year.</li>
+<li>The data begins in 1959 when maximum and minimum temperature are first reported over a full year.</li>
 <li>Before average wind speed data was reported beginning in 1984, this data is indicated as NA in the new file. Since peak daily two-minute wind speed and direction as well as peak 5-second wind gusts are first reported for a full year in 1997, the missing data before 1997 for these fields are also indicated by <i>NA</i>.</li></ol></div>
 
 <p class="p1">The processed version of the daily raw weather data was saved as this file:</p>
@@ -4945,7 +4950,7 @@ VelocityVector <- R6Class("VelocityVector",
 
 ## (Class 3) Force Vector
 
-## The tail point represents the center of mass of all the planets except
+## The tail point represents the center-of-mass of all the planets except
 ## one planet that is deleted. It is represented by the 'PointLocationVector'
 ## object that specifies its position with respect to the coordinate origen.
  
@@ -4955,7 +4960,7 @@ VelocityVector <- R6Class("VelocityVector",
 ## center mass of the planet its moons.
 
 ## The Force Vector or 'ForceVector' object is obtained by subtracting 
-## the tail center of mass vector from the planet head vector PointLocationVector objects.
+## the tail center-of-mass vector from the planet head vector PointLocationVector objects.
 
 ## Force = magnitude * (head - tail)
 
@@ -5301,7 +5306,7 @@ SolarSystem <- R6Class("SolarSystem",
       ## The x-axis is defined by the line through the initial positions
       ## of Jupiter and the sun. The x-y plane is defined by the plane formed 
       ## by the x-axis and the initial direction of Jupiter's velocity.
-      ## The z-axis is defined by the line through the center of mass for the 
+      ## The z-axis is defined by the line through the center-of-mass for the 
       ## initial positions of Jupiter and the sun and perpendicular
       ## to the x-y plane. 
 
@@ -5338,7 +5343,7 @@ SolarSystem <- R6Class("SolarSystem",
       jup_mass <- self$jupiter_system_mass
       jup <- self$get_jupiter() 
       
-      ## Calculation of initial center of mass 
+      ## Calculation of initial center-of-mass 
       jup_distance0 <- jup$distance  #793042000000
       sun_distance0 <- jup_distance0*jup_mass/sun_mass
       inclination <- 1.2986 # degrees
@@ -5539,7 +5544,7 @@ text(-480, -420, "Center-of-Mass of Sun and Jupiter",
      adj = c(0,0), cex = 0.7, col = "#008800")
 text(-480, -500, "is at origin of coordinate system.",
      adj = c(0,0), cex = 0.7, col = "#008800")
-text(-480, -580, "Earth orbits this center of mass.",
+text(-480, -580, "Earth orbits this center-of-mass.",
      adj = c(0,0), cex = 0.7, col = "#008800")
 ## Arrow for comment at bottom
 arrows(-300, -350,-20, -20, col= '#22AA22',length = 0.11,lwd=0.9)
@@ -5660,13 +5665,13 @@ fractional_force2 <- (fraction2 / distance2^2) / total_force2
 
 ```
 
-</div><p class="p1-double-digits">Although the solar output power is fairly constant, the instantaneous irradiation impinging upon the earth varies as the distance between the earth and the sun changes in its rather circular but elliptical orbit about the center of the solar system. . The distance between the earth and the center of the solar system is known to vary from about 147.1-million to 152.1-million kilometers every year. The investigation considers the larger variance of the distance between the earth and the sun caused by the small orbit of the sun around the center of the solar system of very roughly 0.8-million kilometers with a period roughly the same as Jupiter's orbit of 11.862 years to a first approximation for this model which neglects Saturn and the other planets excluded from this three-body model. </p>
+</div><p class="p1-double-digits">Although the solar output power is fairly constant, the instantaneous irradiation impinging upon the earth varies as the distance between the earth and the sun changes in its rather circular but elliptical orbit about the center of the solar system. The distance between the earth and the center of the solar system is known to vary from about 147.1-million to 152.1-million kilometers every year. The investigation considers the larger variance of the distance between the earth and the sun caused by the small orbit of the sun around the center of the solar system of very roughly 0.8-million kilometers with a period roughly the same as Jupiter's orbit of 11.862 years to a first approximation for this model which neglects Saturn and the other planets excluded from this three-body model. </p>
 
 ### Dominance of Jupiter among the Planets
 
 ```{r jupiterdominance, echo=FALSE,  results='asis'}
 
-cat('<p class="p2-double-digits">If we add up the mass in a <a  href="https://ssd.jpl.nasa.gov/?planet_phys_par#D">NASA-JPL table</a>, Jupiter accounts for approximately ',round(100*jupfraction1,1),'% of the solar system mass outside the sun, but it is responsible for most of the force applied to the inner solar system consisting mainly of the sun, Mercury, Venus, and earth lumped together as a system because the Saturn, Uranus, and Neptune gas giants are further away. As far as Jupiter and the other gas giants are concerned, the inner rocky planets including Venus, earth and the sun are a combined system with a center-of-mass within 1000-km of the center of the sun. After this approximation, Jupiter accounts for at least ',round(100*jupfraction2,1),'% of the force applied to the sun-venus-earth system; Saturn accounts for about 8% because it is much further away, Uranus 0.3%. Although these error terms are large, the calculations can still shead some light about the variation of solar irradiation upon the earth.</p>',sep = "")
+cat('<p class="p2-double-digits">If we add up the mass in a <a  href="https://ssd.jpl.nasa.gov/?planet_phys_par#D">NASA-JPL table</a>, Jupiter accounts for approximately ',round(100*jupfraction1,1),'% of the solar system mass outside the sun, but it is responsible for most of the force applied to the inner solar system consisting mainly of the sun, Mercury, Venus, and earth lumped together as a system because the Saturn, Uranus, and Neptune gas giants are further away. As far as Jupiter and the other gas giants are concerned, the inner rocky planets including Venus, earth, and the sun are a combined system with a center-of-mass within 1000-km of the center of the sun. After this approximation, Jupiter accounts for at least ',round(100*jupfraction2,1),'% of the force applied to the sun-venus-earth system; Saturn accounts for about 8% because it is much further away, Uranus 0.3%. Although these error terms are large, the calculations can still shed some light about the variation of solar irradiation upon the earth.</p>',sep = "")
 
 ```
 
@@ -5678,11 +5683,11 @@ cat('<p class="p2-double-digits">If we add up the mass in a <a  href="https://ss
 
 <p class="p2-double-digits">Solving the orbit equations would permit one to start the planets simultaneously with the required velocity and heading necessary to reach aphelion at the proper times. Indeed, solving the equation would eliminate the need for this entire project of generating simulated orbit data. The solution of the orbits of a three-body planetary system has not been found as an equation or in what is called closed form.</p>
 
-<p class="p2-double-digits">Simulated data collection began on July 5th, 1959 after setting the initial conditions as follows. The planets were started at aphelion where the direction of the planet velocity is approximately perpendicular to the position vector to the center of mass of the solar system. Starting orbits at aphelion leads to a new problem because the planets do not reach the aphelion of their orbit simultaneously. For example, while the earth is at aphelion every year in early July, the calendar date of aphelion for Jupiter varies because the period of Jupiter’s orbit is 11.862 years. Since, this makes it impossible to set the initial conditions for all of the planets simultaneously, a process was used to set the planets at aphelion in a sequential manner. After starting the three bodies at aphelion at the time of Jupiter’s aphelion in 1957, the earth is arbitrarily moved and restarted at its own aphelion after a delay of 251 days on July 5, 1958.</p>
+<p class="p2-double-digits">Simulated data collection began on July 5th, 1959 after setting the initial conditions as follows. The planets were started at aphelion where the direction of the planet velocity is approximately perpendicular to the position vector to the center-of-mass of the solar system. Starting orbits at aphelion leads to a new problem because the planets do not reach the aphelion of their orbit simultaneously. For example, while the earth is at aphelion every year in early July, the calendar date of aphelion for Jupiter varies because the period of Jupiter’s orbit is 11.862 years. Since, this makes it impossible to set the initial conditions for all of the planets simultaneously, a process was used to set the planets at aphelion in a sequential manner. After starting the three bodies at aphelion at the time of Jupiter’s aphelion in 1957, the earth is arbitrarily moved and restarted at its own aphelion after a delay of 251 days on July 5, 1958.</p>
 
 <p class="more-top-margin p2app">A. &nbsp; &nbsp; The Sun and Jupiter</p>
 
-<p class="p2-double-digits">The biggest error in this three-body model of the sun, Jupiter, and earth is likely the initial position of the sun opposite jupiter to start the simulation. Consider that two stars of a binary star system pair orbit a common center of mass with the same period. Similar to a binary star pair, we might be tempted to guess that the sun would orbit the common center of mass of the Jupiter-sun combination somewhat roughly every 11.86 years like Jupiter because Jupiter contains 71% of the total planet masses and that the center of the solar system is bounded within some region near the center of mass of the Jupiter-sun combination subject to the effects of the other planets as known error terms for this model. The position of the sun is probably not well known beyond this approximation at this time in the year 2020. Adding Saturn to the model would help reduce the error concerning the center-of-mass as the combined mass of Jupiter and Saturn contains 90% of the total planet masses.</p>
+<p class="p2-double-digits">The biggest error in this three-body model of the sun, Jupiter, and earth is likely the initial position of the sun opposite jupiter to start the simulation. Consider that two stars of a binary star system pair orbit a common center-of-mass with the same period. Similar to a binary star pair, we might be tempted to guess that the sun would orbit the common center-of-mass of the Jupiter-sun combination somewhat roughly every 11.86 years like Jupiter because Jupiter contains 71% of the total planet masses and that the center of the solar system is bounded within some region near the center-of-mass of the Jupiter-sun combination subject to the effects of the other planets as known error terms for this model. The position of the sun is probably not well known beyond this approximation at this time in the year 2020. Adding Saturn to the model would help reduce the error concerning the center-of-mass as the combined mass of Jupiter and Saturn contains 90% of the total planet masses.</p>
 
 <p class="p2-double-digits">Lacking better information, the sun is placed at the aphelion its orbit simultaneously with Jupiter on October 26, 1957. The position of the Sun is set opposite Jupiter so that the center-of-mass of the Jupiter-Sun system is positioned at origin of the coordinate system. </p>
 
@@ -5703,13 +5708,13 @@ cat('<p class="p2-double-digits">If we add up the mass in a <a  href="https://ss
 
 </ul></div></div>
 
-<p class="p2-double-digits">Adding the earth as a third body transforms the stationary center-of-mass of the sun-Jupiter system at the origin of the coordinate system to a new center-of-mass which orbits the origin with radius of 0.00045 million kilometers. As the distance from the earth to the sun varies about 5-million kilometers, this issue was small enough to proceed with the other analysis. This problem could be eliminated by a solution of the equation for the three-body model.</p>
+<p class="p2-double-digits">Adding the earth as a third body transforms the stationary center-of-mass of the sun-Jupiter system at the origin of the coordinate system to a new center-of-mass which orbits the origin with radius of 0.00045-million kilometers. As the distance from the earth to the sun varies about 5-million kilometers, this issue was small enough to proceed with the other analysis. This problem could be eliminated by a solution of the equation for the three-body model.</p>
 
 <br>
 
 ### Simulated Data for Sun-Jupiter-Earth System
 
-<p class="p2-double-digits">At the start of the simulation, the initial position of the sun is set opposite Jupiter such that the center of mass for the Sun-Jupiter pair is at the origin the solar system as described in more detail above. In a better model, the sun would be initially placed opposite the center of mass of Jupiter and Saturn. The following plot only illustrates why such a four-body model should be computed with a more powerful computer. The plot below indicates that the climate on earth could be modulated by the solar system. </p>
+<p class="p2-double-digits">At the start of the simulation, the initial position of the sun is set opposite Jupiter such that the center-of-mass for the Sun-Jupiter pair is at the origin the solar system as described in more detail above. In a better model, the sun would be initially placed opposite the center-of-mass of Jupiter and Saturn. The following plot only illustrates why such a four-body model should be computed with a more powerful computer. The plot below indicates that the climate on earth could be modulated by the solar system. </p>
 
 <br>
 
@@ -5780,8 +5785,17 @@ irrad_df  %>% mutate_at(2:14,
 
 <br>
 
+## Shared Project Code and Data
+
+<p class="p1-double-digits">The code for this project is provided available at [this GitHub Project](https://github.com/marcelMerchat/dry_june_in_illinois):</p> 
+
+<p class="p1-double-digits">https://github.com/marcelMerchat/dry_june_in_illinois</p> 
+
+<br>
+
 ## Bibliography
 
 <p class="p1-double-digits">R.E. Walpole, R. H. Myers, S. L. Myers, K. Ye (Eds.). (2007).<i> Probability and Statistics for Scientists and Engineers</i> (8th ed.). Upper Saddle River, NJ: Pearson Prentice Hall.</p> 
+
 
 
