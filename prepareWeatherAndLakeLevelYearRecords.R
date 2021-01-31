@@ -1,173 +1,40 @@
 ## Weather for O'Hare Airport
-##
-## @author Marcel Merchat
+## Marcel Merchat
 ## December 18, 2019
-##
-## The raw data was downloaded following the US Government API at the  
-## National Centers for Environmental Information (NCEI) Access Data Service
-## using their RESTful application programming interface (API) to access and
-## subset data based on a the set of parameters shown below.
 
-library(lattice)
+#############################################################################
 
-# library(ggplot2)
-# library(caret)
-# library(glmnet)
-# library(randomForest)
-# library(AppliedPredictiveModeling)
-# 
-# library(psych)
-# library(xtable)
-# 
-# 
-# library(grid)
-# library(gridExtra)
-# library(stats)
-# 
-# library(pROC)
-# library(plotROC)
+## Function Definitions
 
-##
-## The raw data was automatically downloaded:
-fileUrl <- "https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&stations=USW00094846&startDate=1958-01-01&endDate=2019-07-01&format=csv"
-setwd("~/edu/physics/earthScience/chicago_weather")
-## download.file(fileUrl, dest="chicagoData2018.csv")
- 
-## The end date query parameter of the internet address should be
-## updated for new downloads. The last download was for data up to
-## July 1, 2019. 
+#############################################################################
 
-## The field definitions are given here.
-## https://www1.ncdc.noaa.gov/pub/data/cdo/documentation/GHCND_documentation.pdf
-## https://www1.ncdc.noaa.gov/pub/data/ghcn/daily/readme.txt
-##
-## List of weather stations:
-## ftp://ftp.ncdc.noaa.gov/pub/data/ghcn/daily/ghcnd-inventory.txt
-##
-## PRCP = Precipitation (tenths of mm) (This program changes this to express its results in mm.)
-## SNOW = Snowfall (mm)
-## SNWD = Snow depth (mm)
-## TMAX = Maximum temperature (tenths of degrees C)
-## TMIN = Minimum temperature (tenths of degrees C)
-## AWND = Average daily wind speed (tenths of meters per second)
-## WDF2 = Direction of fastest 2-minute wind (degrees)
-## WSF2 = Fastest 2-minute wind speed (meters per second)
-## WSF5 = Gust intensity as fastest 5-second wind speed (meters per second)
-## WT** = Weather Type where * has one of the following values:
-##    01 = Fog, ice fog, or freezing fog (may include heavy fog)
-##    03 = Thunder
-##    05 = Hail (may include small hail)
-##    08 = Smoke or haze
-##    09 = Blowing or drifting snow
-##    10 = Tornado, waterspout, or funnel cloud
-##    11 = High or damaging winds
-##    13 = Mist
-##    16 = Rain (may include freezing rain, drizzle, and freezing drizzle)
-##    17 = Freezing rain
-##    18 = Snow, snow pellets, snow grains, or ice crystals
+## Function-1:  get_real_data                            Line-34
+## Function-2:  get_bool_data                            Line-46
+## Function-3:  get_quote_trimmed                        Line-52
+## Function-4:  get_zero_trimmed                         Line-69
 
-## 9075014 Harbor Beach, MI Jan 01, 1860 - present
-## 9087044 Calumet Harbor, IL Feb 01, 1905 - present
-## Verified Monthly Mean Water Level
-## monthly_mean	Verified monthly mean water level data for the station.
-huronUrl <- "https://tidesandcurrents.noaa.gov/api/datagetter?begin_date=19590101&end_date=20190701&station=9075014&product=monthly_mean&datum=IGLD&units=metric&time_zone=gmt&application=web_services&format=csv"
-##          https://tidesandcurrents.noaa.gov/api/datagetter?begin_date=20130101&end_date=20130101&station=8454000&product=water_level&datum=mllw&units=metric&time_zone=gmt&application=web_services&format=xml 
-setwd("~/edu/physics/earthScience/chicago_weather")
-## download.file(huronUrl, dest="huron_michigan_harbor_beach19592018.csv")
-michUrl <- "https://tidesandcurrents.noaa.gov/api/datagetter?begin_date=19590101&end_date=20190701&station=9087044&product=monthly_mean&datum=IGLD&units=metric&time_zone=gmt&application=web_services&format=csv"
-## download.file(fileUrl, dest="huron_michigan_calumet_harbor19592018.csv")
+#############################################################################
 
-findmatchgreg <- function(text,pattern){
- ## gregexpr returns a list of giving the starting position of the matches
- ## or -1 if there is none, with attribute "match.length", an integer vector
- ## giving the length of the matched text (or -1 for no match)
-    
- ## Same as regexpr except provides multiple matches.    
-    re <- gregexpr(pattern,text)
-    rm <- regmatches(text, re)
-    unlist(Filter(function(x) !identical(character(0),x), rm))
-}
+## Processing Scripts
 
-months <- c("jan","feb","mar","apr","may","jun",
-            "jul","aug","sep","oct","nov","dec")
+#############################################################################
 
-get_month_days <- function(m){
-    monthdays31 <- c(1:31)
-    monthdays30 <- c(1:30)
-    if(m == "jan" | m == "mar" | m == "may" | m == "jul" |
-       m == "aug" | m == "oct" | m == "dec" )
-    {
-        dd <- monthdays31
-    } else if(m == "apr" | m == "jun" | m == "sep" | m == "nov" )
-    {
-        dd <- monthdays30
-    } else if(m == "feb")
-    {
-        dd <- c(1:28)
-    } else {
-        dd <- rep(NA,31)
-    }
-    dd
-}
+## Get Raw Weather Data                                 Line-94
+## (chicagoData2018.csv)
+## Clean Weather Data                                   Line-327
+## Save processed raw data                              Line-362
+## (chicagoWeatherMetricUnits.csv)
+## Get Raw Lake Huron-Michigan Level Data               Line-367  
+## Prepare file of year records                         Line-417
+## (yearlyChicagoWeatherAndLakeLevel.csv)
 
-# get_month_num <- function(m){
-#     if(m == "jan")
-#     {
-#         num <- 1
-#     } else if(m == "mar")
-#     {
-#         num <- 3
-#     } else if(m == "may" )
-#     {
-#         num <- 5
-#     } else if(m == "jul" )
-#     {
-#         num <- 7
-#     } else if(m == "aug")
-#     {
-#         num <- 8
-#     } else if(m == "oct")
-#     {
-#         num <- 10
-#     } else if(m == "dec" )
-#     {
-#         num <- 12
-#     } else {
-#         num <- NA
-#     }
-#     num
-# }
 
-get_month_abbreviation <- function(num){
-    if(num == 1) {
-        m <- "jan" 
-    } else if(num == 2) {
-        m <- "feb"
-    } else if(num == 3) {
-        m <- "mar"
-    } else if(num == 4) {
-        m <- "apr"
-    } else if(num == 5) {
-        m <- "may"
-    } else if(num == 6) {
-        m <- "jun"
-    } else if(num == 7) {
-        m <- "jul"
-    } else if(num == 8) {
-        m <- "aug"
-    } else if(num == 9) {
-        m <- "sep"
-    } else if(num == 10) {
-        m <- "oct"
-    } else if(num == 11) {
-        m <- "nov"
-    } else if(num == 12) {
-        m <- "dec"
-    } else {
-        m <- NA
-    } 
-    m
-}
+#############################################################################
+#############################################################################
+#############################################################################
+#############################################################################
+
+## Function Definitions
 
 get_real_data <- function(text){
     ##found <- gregexpr("\\d{1,3}", text)
@@ -218,16 +85,79 @@ get_zero_trimmed <- function(text){
     }
     text
 }
-text_try = c("go to the store","get the eggs and the butter")
-re <- gregexpr("the",text_try)
-rm <- regmatches(text_try, re)
-unlist(Filter(function(x) !identical(character(0),x), rm))
 
-text_try = "USW00094846,1958-01-01,,,  -97,,,,,,,,,,,,,,"
-patt <- ",(\\d{4}-\\d{2}-\\d{2}),(.+)"
-re <- gregexpr(",(\\d{4}-\\d{2}-\\d{2}),(.+)",text_try)
-start = re[[1]][1] + 1
-date = substr(text_try, start, start+9)
+#############################################################################
+#############################################################################
+
+## Scripts for Processing Data
+
+#############################################################################
+#############################################################################
+
+## Raw Data
+
+## Get Raw Weather Data
+
+## The raw data was downloaded following the US Government API at the  
+## National Centers for Environmental Information (NCEI) Access Data Service
+## using their RESTful application programming interface (API) to access and
+## subset data based on a the set of parameters shown below.
+
+## The raw data was automatically downloaded:
+fileUrl <- "https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&stations=USW00094846&startDate=1958-01-01&endDate=2019-07-01&format=csv"
+setwd("~/edu/physics/earthScience/chicago_weather")
+## download.file(fileUrl, dest="chicagoData2018.csv")
+
+## The end date query parameter of the internet address should be updated
+## for new downloads. The last download was for data up to July 1, 2019. 
+
+## The field definitions are given here.
+## https://www1.ncdc.noaa.gov/pub/data/cdo/documentation/GHCND_documentation.pdf
+## https://www1.ncdc.noaa.gov/pub/data/ghcn/daily/readme.txt
+
+## List of weather stations:
+## ftp://ftp.ncdc.noaa.gov/pub/data/ghcn/daily/ghcnd-inventory.txt
+##
+## PRCP = Precipitation (tenths of mm) 
+##        (This program changes this to express its results in mm.)
+## SNOW = Snowfall (mm)
+## SNWD = Snow depth (mm)
+## TMAX = Maximum temperature (tenths of degrees C)
+## TMIN = Minimum temperature (tenths of degrees C)
+## AWND = Average daily wind speed (tenths of meters per second)
+## WDF2 = Direction of fastest 2-minute wind (degrees)
+## WSF2 = Fastest 2-minute wind speed (meters per second)
+## WSF5 = Gust intensity as fastest 5-second wind speed (meters per second)
+## WT** = Weather Type where * has one of the following values:
+##   01 = Fog, ice fog, or freezing fog (may include heavy fog)
+##   03 = Thunder
+##   05 = Hail (may include small hail)
+##   08 = Smoke or haze
+##   09 = Blowing or drifting snow
+##   10 = Tornado, waterspout, or funnel cloud
+##   11 = High or damaging winds
+##   13 = Mist
+##   16 = Rain (may include freezing rain, drizzle, and freezing drizzle)
+##   17 = Freezing rain
+##   18 = Snow, snow pellets, snow grains, or ice crystals
+
+###############################################################################
+
+## Get Raw Lake Huron-Michigan Level Data
+
+###############################################################################
+
+## 9075014 Harbor Beach, MI Jan 01, 1860 - present
+## 9087044 Calumet Harbor, IL Feb 01, 1905 - present
+## Verified Monthly Mean Water Level
+## monthly_mean	Verified monthly mean water level data for the station.
+huronUrl <- "https://tidesandcurrents.noaa.gov/api/datagetter?begin_date=19590101&end_date=20190701&station=9075014&product=monthly_mean&datum=IGLD&units=metric&time_zone=gmt&application=web_services&format=csv"
+##          https://tidesandcurrents.noaa.gov/api/datagetter?begin_date=20130101&end_date=20130101&station=8454000&product=water_level&datum=mllw&units=metric&time_zone=gmt&application=web_services&format=xml 
+setwd("~/edu/physics/earthScience/chicago_weather")
+## download.file(huronUrl, dest="huron_michigan_harbor_beach19592018.csv")
+michUrl <- "https://tidesandcurrents.noaa.gov/api/datagetter?begin_date=19590101&end_date=20190701&station=9087044&product=monthly_mean&datum=IGLD&units=metric&time_zone=gmt&application=web_services&format=csv"
+## download.file(fileUrl, dest="huron_michigan_calumet_harbor19592018.csv")
+
 
 filename <- "chicagoData2018.csv"
 conn <- file(filename,open="r")
@@ -394,8 +324,52 @@ while (length(one_line <- readLines(conn, n = 1, warn = FALSE)) > 0) {
 } 
 close(conn) ## Reading raw weather data is complete
 
+#############################################################################
+
+##  Clean Weather Data and save as chicagoWeatherMetricUnits.csv
+
+#############################################################################
+
+## For obvious cases such as snow in July, replace missing data with 0
+
+df[df$fog_wt01=="","fog_wt01"] <- 0
+df[df$thunder_wt03=="","thunder_wt03"] <- 0
+df[df$hail_wt05=="","hail_wt05"] <- 0
+df[df$haze_wt08=="","haze_wt08"] <- 0
+df[df$blowing_snow_wt09=="","blowing_snow_wt09"] <- 0
+df[df$funnel_cloud_wt10=="","funnel_cloud_wt10"] <- 0
+df[df$damaging_wind_wt11=="","damaging_wind_wt11"] <- 0
+df[df$rain_wt16=="","rain_wt16"] <- 0
+df[df$freezing_rain_wt17=="","freezing_rain_wt17"] <- 0
+df[df$snow_wt18=="","snow_wt18"] <- 0
+
+## The file named chicagoWeatherMetricUnits.csv is similar to the original data,
+## consisting of daily records. It is modified to handle obvious cases of
+## missing data such as snow in July, missing wind data before the
+## introduction wind data, and metric units for temperature and distance. 
+
+## 1. There are separate columns for the year, month, and date as integers
+## 2. The data begins in 1959 when maximum and minimium temperature are 
+##    are first reported over a full year. 
+## 3. Temperatures are now indicated in degrees Centigrade. In the original
+##    data, the temperature is multiplied by 10 to eliminate any decimals. 
+## 4. The amount of rain precipitation is provided in millimeters.
+##    In the original data, the rain data is multiplied by 10
+##    to eliminate any decimal.
+## 5. Missing data is indicated as 'NA' values. For example, there is only 
+##    complete average wind speed data beginning in 1984. Peak daily two minute
+##    wind speed and direction as well as peak 5-second wind gusts begin
+##    in 1997. 
+
+write.csv(df, file = "chicagoWeatherMetricUnits.csv")
+
+#############################################################################
+
+## Lake-Level Data
+
+#############################################################################
+
 ## Import monthly average lake-level data.
-## The monthly average will be added to each day record of the month.
 
 filename <- "huron_michigan_calumet_harbor19592018.csv"
 conn <- file(filename,open="r")
@@ -411,6 +385,7 @@ while (length(one_line <- readLines(conn, n = 1, warn = FALSE)) > 0) {
     
     highest <- myVector[[1]][3]
     high_level <- get_real_data(highest)
+ ## The monthly average is duplicated for each month day record of the month.
     if(!is.na(high_level)){
         df[df$Year==y & df$Month==m,"HighWaterLevel"] <- high_level
     } else {
@@ -434,47 +409,19 @@ while (length(one_line <- readLines(conn, n = 1, warn = FALSE)) > 0) {
     }
 } 
 close(conn)
+
 ## Reading lake level data is completed.
 
-df[df$fog_wt01=="","fog_wt01"] <- 0
-df[df$thunder_wt03=="","thunder_wt03"] <- 0
-df[df$hail_wt05=="","hail_wt05"] <- 0
-df[df$haze_wt08=="","haze_wt08"] <- 0
-df[df$blowing_snow_wt09=="","blowing_snow_wt09"] <- 0
-df[df$funnel_cloud_wt10=="","funnel_cloud_wt10"] <- 0
-df[df$damaging_wind_wt11=="","damaging_wind_wt11"] <- 0
-df[df$rain_wt16=="","rain_wt16"] <- 0
-df[df$freezing_rain_wt17=="","freezing_rain_wt17"] <- 0
-df[df$snow_wt18=="","snow_wt18"] <- 0
 
-## The file named chicagoSnowYearWeather.csv is similar to the original data,
-## consisting of daily records. It is modified to handle obvious cases of
-## missing data such as snow in July, missing wind data before the
-## introduction wind data, and metric units for temperature and distance. 
+################################################################################
 
-## 1. There are separate columns for the year, month, and date as integers
-## 2. The data begins in 1959 when maximum and minimium temperature are 
-##    are first reported over a full year. 
-## 3. Temperatures are now indicated in degrees Centigrade. In the original
-##    data, the temperature is multiplied by 10 to eliminate any decimals. 
-## 4. The amount of rain precipitation is provided in millimeters.
-##    In the original data, the rain data is multiplied by 10
-##    to eliminate any decimal.
-## 5. Missing data is indicated as 'NA' values. For example, there is only 
-##    complete average wind speed data beginning in 1984. Peak daily two minute
-##    wind speed and direction as well as peak 5-second wind gusts begin
-##    in 1997. 
+## Prepare file of year records and save as yearlyChicagoWeatherAndLakeLevel.csv
 
-write.csv(df, file = "chicagoWeatherMetricUnits.csv")
+################################################################################
 
-###############################################################
-
-## Prepare file of year records
 
 ## Thirteen fields are provided for each type of weather item including 
 ## a year average field and twelve month average fields.
-
-###############################################################
 
 dfr <- read.csv("chicagoWeatherMetricUnits.csv",stringsAsFactors = FALSE)
 

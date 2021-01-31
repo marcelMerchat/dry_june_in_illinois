@@ -1,6 +1,7 @@
 # dry_june_in_illinois
 
-The report describes a machine-learning prediction comparing these methods:
+The report describes making predictions using machine-learning while comparing
+these methods:
 
 A. Ordinary-least-squares
 B. Partial-least-squares (PLS)
@@ -15,32 +16,36 @@ The Farmer's Almanac advises about "A cold and wet June" and it might seem
 foolhardy to improve upon a maxim like this one or try to predict anything
 about weather, but this investigation nevertheless considers whether anything
 might be gained if we apply machine-learning or artificial intelligence to
-weather data records from O'Hare Airport at Chicago, Illinois covering the
+weather records from O'Hare Airport at Chicago, Illinois covering the
 years from 1960 to 2018. This analysis certainly shows the difficulties in
 weather prediction, but perhaps it shows that the likelihood or probability
-of a wet June appears be weakly correlated with snow in February and negative
-weak correlation with March temperature and other variables over the previous
-eleven months of a yearly weather record.
+of a wet June appears be weakly correlated with snow in February and cold
+weather in early spring and other variables over the previous months of a
+yearly weather record.
 
-After exploring the relationship between June rainfall and weather data by
-looking for clusters, we develop four algorithms that predict the amount of
-rain for the month of June in Section-12. We compare the mean-squared error
-for four models using cross-validation in in Section-13, and finally perform
-final tests for which the bias, variance, and mean-square-error for each
-method is presented in Section-14.
+For exploration and unsupervised learning, we first explore the relationship
+between June rainfall and other weather data by computing correlations between
+weather variables and performing cluster analysis. Based on the
+correlation results, a preliminary ordinary-least-squares analysis is performed
+for every possible combination of a reduced set of six column variables which
+have relatively high correlation with June rain. This was followed by
+principal components analysis for the same reduced set of six variables.
 
-In trying to predict the amount of June rain, this report can only point to
-a relatively weak correlation with weather in the preceding months. The data
-indicates that the probability of a wet June is slightly correlated with heavy
-snow in February and cold weather in March and April. This lowers the
-probability of a dry June a little, but the difference between a dry June that
-affects crop yields and a less damaging one can be affected by one storm in the
-middle of the month. Another way of saying this is that the relatively large
-variance in June rain level is more crucial when the predicted total rainfall
-is small, particularly below 100-mm, compared to years with more rain. None of
-the dry years in the final test have predictions above 100-mm for June rain
-while the three wettest year in the training data have predictions above 100-mm
-for June rain as shown in the exploratory plot of Figure-6.
+For supervised machine learning and model training, we develop models for four
+algorithms that predict the amount of June rain and compare the
+mean-squared-error for these models using cross-validation. Finally, we perform
+final tests for which the bias, variance, and mean-square-error is presented
+for each method.
+
+The low correlation of June rain with February snow and cold weather in March
+and April changes the probability of a dry June a small but statistically
+significant amount, particularly for wet cluster years with predicted rain
+level over 100-mm.
+
+The years in the dry cluster seem to have a more or less constant rain level,
+independent of the amount of predicted rainfall. None of the dry cluster years
+have June rain predictions above 100-mm while the three wettest years have
+predictions above 100-mm as shown in the exploratory plot of Figure-6.
 
 The reproducible code for this project and report is shared at this address:
 
@@ -54,20 +59,12 @@ processed to make a data frame of year records that also including the level
 of Lakes Huron-Michigan and simulated solar irradiation levels. The raw data
 for O’Hare Airport was automatically downloaded following the application
 programming interface (API) at the National Centers for Environmental
-Information (NCEI) for the United States Government.
+Information (NCEI) for the United States Government. The following query
+parameters were appended to the internet address to fetch the data:
 
-https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries
+stations=USW00094846, startDate=1958-01-01, endDate=2019-07-01, format=csv
 
-The following query parameters were appended to the internet address to fetch
-the data:
-
-stations=USW00094846
-startDate=1958-01-01, endDate=2019-07-01, format=csv
-
-The raw lake-level data covers the period beginning with the 1958-1959 snow year
-and ends with the 2018-2019 snow year where a snow year begins on July 1 and
-ends the following calendar year on June 30. The download was saved as a file
-named ChicagoData2018.csv.
+The download is saved as the file named ChicagoWeather2018.csv.
 
 ## Numerical Data Fields
 
@@ -104,7 +101,7 @@ WT16, Rain (may include freezing rain, drizzle, and freezing drizzle)
 WT17, Freezing rain
 WT18, Snow, snow pellets, snow grains, or ice crystals
 
-## Other Meterological Data
+## Other Meteorological Data
 Although we only use the above weather data from Station USW00094846 at O’Hare
 Airport for our final predictions, we also explored if the level of Lakes
 Huron-Michigan or solar irradiation levels were correlated with June rain,
@@ -116,55 +113,53 @@ The Army Corp of Engineering considers Lakes Huron and Michigan as a single body
 of water with the same average water level. The monthly mean water level for
 Station 9075014 at Harbor Beach, MI and Station 9087044 at Calumet Harbor in
 Illinois was automatically downloaded from the NOAA government website with
-query parameters to select the years from 1959 until 2019 as well as the IGLD
-datum which specifies a water-level correction for the slow elevation change
-caused by the ice loading during the ice age thousands of years ago.
+query parameters to select to select the years beginning with the 1958-1959
+snow year and ending with the 2018-2019 snow year where a snow year begins
+on July 1 and ends the following calendar year on June 30.
 
-The lake levels for the two stations were averaged together for the analysis to
-solve the problem of a few missing day reports. The raw downloaded data was
-saved using these file names:
+The raw downloaded data was saved using these file names:
 
 9075014 Harbor Beach, MI: “huron_michigan_harbor_beach19592018.csv”
 9087044 Calumet Harbor, IL: “huron_michigan_calumet_harbor19592018.csv.”
 
-As only airport weather data was selected for the final models, the dimension
-of the solution was reduced by elimination of lake level variables from the
-model. However, the lake data is still part of the data frame of all variables.
+After downloading the data for two stations in order to handle the problem of
+a few missing days, the problem was alternately solved by downloading month
+average water levels. The monthly mean water level for Station 9087044 at
+Calumet Harbor was used. As only airport weather data was selected for the
+final models, the dimension of the solution was reduced by elimination of lake
+level variables from the model. However, the lake data is still part of the
+data frame and file of all variables.
 
 ## Simulated Solar Irradiation Data
 Solar data was not selected for the final models despite having some low
 correlation with June rain as the weather variables in the airport data have
-higher correlation. Since it might be unwarranted to discard the perturbation of
-the earth’s orbit and the solar irradiation levels for the earth caused by the
-gravitational mass of Jupiter without understanding how insignificant this might
-be, the solar data requires further study. The description of the simulated
-solar irradiation data is included in the Appendix of the report at
-paragraph 15.6.
+higher correlation. Since it might be unwarranted to discard the perturbation
+of the earth’s orbit and the solar irradiation levels for the earth caused by
+the gravitational pull of Jupiter without understanding how insignificant this
+might be, the solar data requires further study. The description of the
+simulated solar irradiation data is included in the Appendix at Section-10.6
+of the report.
 
 The code for generating the raw solar data is contained in the file named
 SunJupiterEarthSimulation.R. The raw data was processed to produce monthly and
 year averages as described below under preparing year records.
 
 ## Handling Missing Data
-
 The data quality for the airport and lake stations are very high. However, as
 fields were left blank for data entry where zero is obvious such as reports of
-blowing snow for July at Chicago and other binary categorical fields, there was
+blowing-snow for July at Chicago and other binary categorical fields, there was
 some need convert the blanks to zero for the analysis. Where data is missing for
 binary categorical fields, blanks were replaced with 0.
 
 Another type of obvious missing data is wind data for years before wind data
-was recorded. In this case, missing data is indicated as NA which helps data
-processing to identify missing data versus many other kinds of blank spaces
-in files.
+was recorded. In this case, missing data is indicated as NA which helps in data
+processing to identify missing data among other kinds of blank spaces in files.
 
 ## Changes for Modified Data File:
-
 There are separate columns for the year, month, and date as integers.
-
 Temperatures are now indicated in degrees Centigrade. In the original data,
-the temperature is multiplied by 10 to eliminate any decimals.
-Rain precipitation is converted to millimeters where the raw PRCP field was
+the temperature is multiplied by 10 to eliminate any decimals. Rain
+precipitation is converted to millimeters where the raw PRCP field was
 expressed in tenths of a millimeter without decimals. For example, 1.2-mm of
 precipitation was originally recorded as 12 which may have been helpful for
 data entry. In the new data file, 1.2-mm of rain is expressed as 1.2.
@@ -177,7 +172,7 @@ for a full year in 1997, the missing data before 1997 for these fields are also
 indicated by NA. The processed version of the daily raw weather data was saved
 as this file:
 
-chicagoWeatherMetricUnits.csv
+ChicagoWeatherMetricUnits.csv
 
 The code that accomplishes this is in this file:
 
@@ -188,26 +183,24 @@ yearlyChicagoWeatherAndLakeLevel.csv that is described directly below for
 preparing year records.
 
 ## Preparing Year Records
-
-Year records consist of snow years beginning in July and ending in June. The
-raw daily record data was processed to produce snow year records beginning with
-the year designated as 1959 from July 1959 to June 1960 as the first year. For
-each raw daily weather variable, a year record is constructed from twenty-two
-variables including nineteen daily weather variables, and three lake-level
-variables for high, mean, and low average monthly water levels. For each of the
-twenty-two variables, the computed year record includes twelve monthly variables
-plus a thirteenth variable as the average for the entire year. A year record
-consists of 286 columns (13 X 22) plus one variable for the year. As a result,
-a data frame with 287 columns was prepared and saved as a file named
-yearlyChicagoWeatherAndLakeLevel.csv.
+The raw daily record data was processed to produce snow-year records beginning
+with the year designated as 1959 from July 1959 to June 1960 as the first year.
+For each raw daily weather variable, a year record is constructed from
+twenty-two variables including nineteen daily weather variables, and three
+lake-level variables for high, mean, and low average monthly water levels.
+For each of the twenty-two variables, the computed year record includes twelve
+monthly variables plus a thirteenth variable as the average for the entire year.
+A year record consists of 286 columns (13 X 22) plus one variable for the year.
+As a result, a data frame with 287 columns was prepared and saved as a file
+named yearlyChicagoWeatherAndLakeLevel.csv.
 
 After generating the raw simulated irradiation data, the raw irradiation data
-was processed to produce a year record data frame and file that corresponds to
+was processed to produce a data frame and file of year records corresponding to
 the year records for weather and lake-levels. A year record for irradiation
-includes twelve monthly averages plus a thirteenth variable for the year average
-plus one variable for the year. The data frame of irradiation year records was
-saved as a file named yearlyIrradiationData.csv. The code for generating the
-raw irradiation data and year records is in the file named
+includes twelve monthly averages plus a thirteenth variable for the yearly
+average plus one variable for the year. The data frame of irradiation year
+records was saved as a file named yearlyIrradiationData.csv. The code for
+generating the raw irradiation data and year records is in the file named
 SunJupiterEarthSimulation.R
 
 The thirteen solar irradiation columns were added to the 287 columns of weather
@@ -225,28 +218,61 @@ system. An improved model requiring more orbit calculations would include Venus
 and Saturn. The computer code that generated the simulation is in the file
 SunJupiterEarthSimulation.R.
 
-Although the solar output power is fairly constant, the instantaneous
-irradiation impinging upon the earth varies as the distance between the earth
-and the sun changes in its rather circular but elliptical orbit about the center
-of the solar system. The distance between the earth and the center of the solar
-system is known to vary from about 147.1-million to 152.1-million kilometers
-every year. The investigation considers the larger variance of the distance
-between the earth and the sun caused by the small orbit of the sun around the
-center of the solar system of very roughly 0.8-million kilometers with a period
+The instantaneous irradiation impinging upon the earth varies as the distance
+between the earth and the sun changes in its rather circular but elliptical
+orbit about the center of the solar system. For the simulation, the solar
+output power was set so that the average irradiation for earth was 1361-Watts
+per square meter based on the effective mean-square distance
+of 149.642 million kilometers generated by the simulation for a 1-year orbit
+which varies slightly from the 1-AU definition of 149.59787 million kilometers.
+The solar output that corresponds to this is 382.98-yotta watts, notwithstanding
+the popular figure of 384.6-yota watts that corresponds to a former NASA
+measurement of 1367.6 Watts per square meter and a sun-earth distance of 1-AU
+or 149.59787 million kilometers.
+
+Popular Solar Power Figure:
+3.846e+26 = 4 * 1367.6 * 3.14159 * 149.59787^2 * 10^18
+
+But if we correct for recent NASA measurements for solar radiation and the
+simulated results:
+
+Average solar irradiation      = 1361 watts per square-meter
+Mean-square sun-earth distance = 149,642,243 kilometers
+
+Simulation Solar Power Figure:
+3.8298e+26 = 4 * 1361 * 3.14159 * 149.642243 * 10^18
+
+The solar output of around 384.6 yota-Watts is corrected
+to 382.983 yota-watts which is close to the estimate of 3.83e26 at
+https://www.omnicalculator.com/physics/luminosity
+
+Knowing the true solar output would require knowing the instantaneous distance
+to the sun at the time of a very accurate irradiation measurement. Since the
+distance to the sun is always changing in a cycle of many years depending on
+the position of the sun with respect to Jupiter and Saturn and the position
+of the earth within the earth-moon system, there is a small uncertainty
+regarding the sun-earth distance at particular times that would be needed to
+establish the true solar output power.       
+
+The distance between the earth and the center of the solar system is known
+to vary from about 147.1-million to 152.1-million kilometers every year.
+The investigation considers the additional variance of the distance between
+the earth and the sun caused by the small orbit of the sun around the center
+of the solar system of very roughly 0.8-million kilometers with a period
 roughly the same as Jupiter’s orbit of 11.862 years to a first approximation
-for this model which neglects Saturn and the other planets excluded from this
+for this model which neglects Saturn and the other planets excluded from the
 three-body model.
 
 ## Dominance of Jupiter among the Planets
 If we add up the mass in a NASA-JPL table, Jupiter accounts for approximately
-71.2% of the solar system mass outside the sun, but it is responsible for most
-of the force applied to the inner solar system consisting mainly of the sun,
+71.2% of the solar system mass outside the sun, but it is responsible for over
+90% of the force applied to the inner solar system consisting mainly of the sun,
 Mercury, Venus, and earth lumped together as a system because the Saturn,
 Uranus, and Neptune gas giants are further away. As far as Jupiter and the
 other gas giants are concerned, the inner rocky planets including Venus, earth,
 and the sun are a combined system with a center-of-mass within 1000-km of the
 center of the sun. After this approximation, Jupiter accounts for at least
-91.4% of the force applied to the sun-venus-earth system; Saturn accounts for
+91.4% of the force applied to the sun-Venus-earth system; Saturn accounts for
 about 8% because it is much further away, Uranus 0.3%. Although these error
 terms are large, the calculations can still shed some light about the variation
 of solar irradiation upon the earth.
@@ -285,7 +311,7 @@ on July 5, 1958.
 
 ## The Sun and Jupiter
 The biggest error in this three-body model of the sun, Jupiter, and earth is
-likely the initial position of the sun opposite jupiter to start the simulation.
+likely the initial position of the sun opposite Jupiter to start the simulation.
 Consider that two stars of a binary star system pair orbit a common
 center-of-mass with the same period. Similar to a binary star pair, we might be
 tempted to guess that the sun would orbit the common center-of-mass of the
